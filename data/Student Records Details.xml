@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<studentRecordList>
+    <studentRecordList studentID="SR01">
+        <studentBatchName>MCA</studentBatchName>
+        <studentClass>Master Degree</studentClass>
+        <studentCourse>N/A</studentCourse>
+        <studentInstitution>GNIT</studentInstitution>
+        <studentName>Sumit Roy</studentName>
+        <studentSubjectDetails>C,JAVA,C++</studentSubjectDetails>
+    </studentRecordList>
+    <studentRecordList studentID="AR01">
+        <studentBatchName>ENGINEERING</studentBatchName>
+        <studentClass>B.Tech</studentClass>
+        <studentCourse>N/A</studentCourse>
+        <studentInstitution>NIT</studentInstitution>
+        <studentName>Amit Roy</studentName>
+        <studentSubjectDetails>C,.NET,C++</studentSubjectDetails>
+    </studentRecordList>
+</studentRecordList>
