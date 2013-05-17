@@ -4,14 +4,15 @@
  */
 package com.srsoftwares.studrecmgmt.gui;
 
-import com.srsoftwares.studrecmgmt.core.DataParser;
-import com.srsoftwares.studrecmgmt.data.StudentRecord;
-import com.srsoftwares.studrecmgmt.data.StudentRecordList;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Image;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,15 +25,15 @@ import org.slf4j.LoggerFactory;
 public class LoginDialog extends javax.swing.JDialog {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginDialog.class);
+    private ProgressPanel progressPanel;
 
-    
     /**
      * Creates new form LoginDialog
      */
     public LoginDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-               try {
+        try {
             Image image = ImageIO.read(this.getClass().getResource("/images/login.png"));
             if (image != null) {
                 this.setIconImage(image);
@@ -52,9 +53,15 @@ public class LoginDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         mainPanel = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JSeparator();
-        jLabel1 = new javax.swing.JLabel();
+        mainSeparator = new javax.swing.JSeparator();
+        headerLabel = new javax.swing.JLabel();
+        centralPanel = new javax.swing.JPanel();
+        loginLabel = new javax.swing.JLabel();
+        passwordLabel = new javax.swing.JLabel();
+        loginIDTextField = new javax.swing.JTextField();
+        passwordTextField = new javax.swing.JPasswordField();
+        checkInBtn = new javax.swing.JButton();
+        mainProgressPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Student Records Management  - Login");
@@ -65,42 +72,112 @@ public class LoginDialog extends javax.swing.JDialog {
         mainPanel.setBackground(new java.awt.Color(255, 255, 255));
         mainPanel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton1.setText("Click Me");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        headerLabel.setBackground(new java.awt.Color(255, 255, 255));
+        headerLabel.setFont(new java.awt.Font("Bell MT", 1, 24)); // NOI18N
+        headerLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        headerLabel.setText("Student Records Managemnt");
+        headerLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        centralPanel.setBackground(new java.awt.Color(51, 51, 51));
+
+        loginLabel.setBackground(new java.awt.Color(255, 255, 255));
+        loginLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        loginLabel.setForeground(new java.awt.Color(0, 255, 255));
+        loginLabel.setText("Login ID");
+
+        passwordLabel.setBackground(new java.awt.Color(255, 255, 255));
+        passwordLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        passwordLabel.setForeground(new java.awt.Color(0, 255, 255));
+        passwordLabel.setText("Password");
+
+        loginIDTextField.setBackground(new java.awt.Color(204, 204, 204));
+        loginIDTextField.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        loginIDTextField.setForeground(new java.awt.Color(51, 51, 51));
+
+        passwordTextField.setBackground(new java.awt.Color(204, 204, 204));
+        passwordTextField.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        passwordTextField.setForeground(new java.awt.Color(51, 51, 51));
+
+        checkInBtn.setBackground(new java.awt.Color(51, 51, 51));
+        checkInBtn.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        checkInBtn.setText("Check In");
+        checkInBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                checkInBtnActionPerformed(evt);
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Bell MT", 1, 18)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Student Records Managemnt");
-        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        javax.swing.GroupLayout centralPanelLayout = new javax.swing.GroupLayout(centralPanel);
+        centralPanel.setLayout(centralPanelLayout);
+        centralPanelLayout.setHorizontalGroup(
+            centralPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(centralPanelLayout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addGroup(centralPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(centralPanelLayout.createSequentialGroup()
+                        .addComponent(loginLabel)
+                        .addGap(27, 27, 27)
+                        .addComponent(loginIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(centralPanelLayout.createSequentialGroup()
+                        .addComponent(passwordLabel)
+                        .addGap(18, 18, 18)
+                        .addGroup(centralPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(passwordTextField)
+                            .addGroup(centralPanelLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(checkInBtn)))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        centralPanelLayout.setVerticalGroup(
+            centralPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(centralPanelLayout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(centralPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(loginLabel)
+                    .addComponent(loginIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(21, 21, 21)
+                .addGroup(centralPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(passwordLabel)
+                    .addComponent(passwordTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addComponent(checkInBtn)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(50, 50, 50))
+            .addComponent(mainSeparator, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
+                .addComponent(headerLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
+            .addComponent(centralPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(headerLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(43, 43, 43))
+                .addComponent(mainSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(centralPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        mainProgressPanel.setBackground(new java.awt.Color(255, 255, 255));
+        mainProgressPanel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        javax.swing.GroupLayout mainProgressPanelLayout = new javax.swing.GroupLayout(mainProgressPanel);
+        mainProgressPanel.setLayout(mainProgressPanelLayout);
+        mainProgressPanelLayout.setHorizontalGroup(
+            mainProgressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        mainProgressPanelLayout.setVerticalGroup(
+            mainProgressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 32, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -108,44 +185,51 @@ public class LoginDialog extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(mainProgressPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mainProgressPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        StudentRecord recordA=new StudentRecord();
-        recordA.setStudentName("Sumit Roy");
-        recordA.setStudentBatchName("MCA");
-        recordA.setStudentClass("Master Degree");
-        recordA.setStudentID("SR01");
-        recordA.setStudentInstitution("GNIT");
-        recordA.setStudentSubjectDetails("C,JAVA,C++");
-        StudentRecord recordB=new StudentRecord();
-        recordB.setStudentName("Amit Roy");
-        recordB.setStudentBatchName("ENGINEERING");
-        recordB.setStudentClass("B.Tech");
-        recordB.setStudentID("AR01");
-        recordB.setStudentInstitution("NIT");
-        recordB.setStudentSubjectDetails("C,.NET,C++");
-        DataParser dataParser=DataParser.getInstance();
-        try {
-            StudentRecordList studentRecordList=new StudentRecordList();
-            studentRecordList.addRecordsToList(recordA);
-            studentRecordList.addRecordsToList(recordB);
-            dataParser.addStudentRecordsToData(studentRecordList);
-            
-        } catch (JAXBException ex) {
-            System.out.println("ERROR OCUURED");
-          logger.error("Exception Occured {} ",ex);
-        }
-        this.dispose();
-        System.exit(0);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void checkInBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkInBtnActionPerformed
+        progressPanel = new ProgressPanel();
+        progressPanel.setProgressLabelText("Please Wait while you are Logging In.");
+        progressPanel.setPanelBackgroundColor(new Color(255, 255, 255));
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                mainProgressPanel.removeAll();
+                mainProgressPanel.setLayout(new BorderLayout());
+                mainProgressPanel.add(progressPanel, BorderLayout.CENTER);
+                progressPanel.setVisible(true);
+                mainProgressPanel.updateUI();
+                mainProgressPanel.setVisible(true);
+            }
+        });
+        Thread t = new Thread(new Runnable() {
+            public void run() {  
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    logger.error("Exception Occured [] ",ex);
+                }
+                   // mainProgressPanel.removeAll();
+                   // mainProgressPanel.updateUI();                       
+            }
+        });
+        t.start();
+        
+        
+        
+    }//GEN-LAST:event_checkInBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -175,12 +259,18 @@ public class LoginDialog extends javax.swing.JDialog {
                 dialog.setVisible(true);
             }
         });
-        
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JPanel centralPanel;
+    private javax.swing.JButton checkInBtn;
+    private javax.swing.JLabel headerLabel;
+    private javax.swing.JTextField loginIDTextField;
+    private javax.swing.JLabel loginLabel;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JPanel mainProgressPanel;
+    private javax.swing.JSeparator mainSeparator;
+    private javax.swing.JLabel passwordLabel;
+    private javax.swing.JPasswordField passwordTextField;
     // End of variables declaration//GEN-END:variables
 }
